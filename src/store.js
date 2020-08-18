@@ -7,13 +7,14 @@ const findById = function (id) {
   return this.items.find(currentItem => currentItem.id === id);
 };
 
-const addItem = function (name) {
-  try {
+const addItem = function (item) {
+  this.items.push(item);
+  /*try {
     item.validateName(name);
     this.items.push(item.create(name));
   } catch (e) {
     console.log(e.message);
-  }
+  }*/
 };
 
 const findAndToggleChecked = function (id) {
