@@ -12,6 +12,7 @@ const main = function () {
       items.forEach((item) => store.addItem(item));
       shoppingList.render();
     });
+
   shoppingList.bindEventListeners();
   shoppingList.render();
 };
