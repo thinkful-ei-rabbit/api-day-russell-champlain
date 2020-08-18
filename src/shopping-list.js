@@ -31,6 +31,30 @@ const generateShoppingItemsString = function (shoppingList) {
   return items.join('');
 };
 
+const generateError = function (message){
+  return `
+  <section class= "error-content">
+  <button id="cancel-error">X</button>
+  <p>${message}</p>
+  </secion>`;
+};
+
+const renderError = function (){
+  if(store.error){
+    const el= generateError(store.error);
+    $('.error-container').html(el);
+  }
+  else{
+    $('.error-container').empty();
+  }
+};
+
+const handleCloseError = function(){
+  $('.error-container').on('click', '#cancel-error',()=>{
+    store.setError(null);
+    renderError();
+  });
+};
 const render = function () {
   // Filter item list if store prop is true by item.checked === false
   let items = [...store.items];
@@ -51,12 +75,15 @@ const handleNewItemSubmit = function () {
     const newItemName = $('.js-shopping-list-entry').val();
     $('.js-shopping-list-entry').val('');
     api.createItem(newItemName)
-      .then(res => res.json())
       .then ((newItem) =>{
         store.addItem(newItem);
         render();
+      })
+      .catch((error)=>{
+        console.log(error);
+        store.setError(error.message);
+        renderError();
       });
-    
   });
 };
 
@@ -76,6 +103,11 @@ const handleDeleteItemClicked = function () {
       .then(() => {
         store.findAndDelete(id, {name: itemName });
         render();
+      })
+      .catch((error)=>{
+        console.log(error);
+        store.setError(error.message);
+        renderError();
       });
   });
 };
@@ -90,6 +122,11 @@ const handleEditShoppingItemSubmit = function () {
       .then(() => {
         store.findAndUpdate(id, {name: itemName });
         render();
+      })
+      .catch((error)=>{
+        console.log(error);
+        store.setError(error.message);
+        renderError();
       });
   });
 };
@@ -103,7 +140,12 @@ const handleItemCheckClicked = function () {
       .then(() => {
         store.findAndUpdate(id, { checked: !item.checked });
         render();
-      });
+      })
+      .catch((error)=>{
+        console.log(error);
+        store.setError(error.message);
+        renderError();
+      }); 
   });
 };
 
@@ -120,6 +162,7 @@ const bindEventListeners = function () {
   handleDeleteItemClicked();
   handleEditShoppingItemSubmit();
   handleToggleFilterClick();
+  handleCloseError();
 };
 // This object contains the only exposed methods from this module:
 export default {
